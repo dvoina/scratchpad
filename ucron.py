@@ -1,4 +1,7 @@
 class UCron:
+    """
+    Minimal cron-like class
+    """
     MD = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
     DAY = 24*60*60
@@ -18,6 +21,9 @@ class UCron:
 
 
     def next(self, now):
+        """
+        Time in seconds from now to the next scheduled run.
+        """
         y = self.__ne(self.years, now[0])
         o = self.__ne(self.months, now[1]-1)
         d = self.__ne(self.days, now[2]-1)
@@ -26,6 +32,9 @@ class UCron:
         return self.__sb((y,o,d,m,h, -1,-1), now)
 
     def __ne(self, data, min):
+        """
+        Next smallest value in a set
+        """
         res = min
         for x in data:
             if x>=min:
@@ -34,12 +43,18 @@ class UCron:
         return res
 
     def __sb(self, n, c):
+        """
+        Computes the number of seconds between two timedate tuples
+        """
         d = self.MIN * (n[5]-c[5])
         d += self.HOUR * (n[4]-c[4])
         d +=self.DAY * (n[3]-c[3])
         return d
 
     def __parse_group(self, group, _max=60):
+        """
+        Parses and expands a group in the form a-b or a/b generating the corresponding ranges.
+        """
         try:
             if group.index("/") >=0:
                 [a,b] = group.split("/")
@@ -66,6 +81,9 @@ class UCron:
 
 
     def __parse_elem(self, elem, _max):
+        """
+        Parses a crontab line element
+        """ 
         groups =[self.__parse_group(x.strip(), _max) for x in elem.split(",")]
         result = []
         for group in groups:
@@ -77,6 +95,9 @@ class UCron:
 
 
     def __parse(self):
+        """
+        Parses a crontab-like line
+        """
         elems = self.__line.split(" ")
         #parse minutes
         self.minutes = self.__parse_elem(elems[0], 60)
@@ -92,8 +113,9 @@ class UCron:
         self.years = range(1970, 2170)[:]
         
 
-ct = UCron("1/10,22,40-48 */2 */3 */4 */5")
-n = ct.next((2018, 12, 8, 19, 59, 22, 5, 349))
-print(n)
-n = ct.next((2019, 0, 0, 0, 0, 0, -1, -1))
-print(n)
+if __name__="__main__":
+    ct = UCron("1/10,22,40-48 */2 */3 */4 */5")
+    n = ct.next((2018, 12, 8, 19, 59, 22, 5, 349))
+    print(n)
+    n = ct.next((2019, 0, 0, 0, 0, 0, -1, -1))
+    print(n)
