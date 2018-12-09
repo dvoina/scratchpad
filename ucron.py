@@ -1,6 +1,8 @@
 class UCron:
     """
-    Minimal cron-like class
+    Minimal cron-like class.
+
+    Should work on uPython - but there is much work to do for this.
     """
     MD = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
@@ -25,8 +27,11 @@ class UCron:
         Time in seconds from now to the next scheduled run.
         """
         y = self.__ne(self.years, now[0])
+        # months start with 1 in file
         o = self.__ne(self.months, now[1]-1)
+        # also days 
         d = self.__ne(self.days, now[2]-1)
+        # we make everything 0-based
         h = self.__ne(self.hours, now[3])
         m = self.__ne(self.minutes, now[4])
         return self.__sb((y,o,d,m,h, -1,-1), now)
